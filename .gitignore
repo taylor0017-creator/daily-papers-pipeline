@@ -2,6 +2,7 @@
 !.gitignore
 
 # Our pipeline directories
+!README.md
 !_shared/
 !daily-papers/
 !daily-papers-fetch/
