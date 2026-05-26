@@ -1,0 +1,186 @@
+{
+  "paths": {
+    "obsidian_vault": "/Users/shiyu67/Documents/Obsidian Vault",
+    "paper_notes_folder": "论文笔记",
+    "daily_papers_folder": "DailyPapers",
+    "concepts_folder": "_概念",
+    "zotero_db": "~/Zotero/zotero.sqlite",
+    "zotero_storage": "~/Zotero/storage"
+  },
+  "daily_papers": {
+    "keywords": [
+      "world model",
+      "diffusion model",
+      "embodied ai",
+      "3d gaussian splatting",
+      "4d gaussian splatting",
+      "sim-to-real",
+      "sim2real",
+      "robot simulation",
+      "llm inference",
+      "agent architecture",
+      "multi-agent",
+      "agentic",
+      "agent framework"
+    ],
+    "negative_keywords": [
+      "medical imaging",
+      "weather forecast",
+      "climate",
+      "pet restoration",
+      "mri",
+      "ct scan",
+      "pathology",
+      "diagnosis",
+      "protein",
+      "drug discovery",
+      "molecular",
+      "audio generation",
+      "music generation",
+      "speech synthesis",
+      "text-to-speech",
+      "speech recognition",
+      "voice cloning",
+      "coding agent",
+      "code agent",
+      "code generation",
+      "software engineering agent",
+      "gui agent",
+      "computer use",
+      "web agent",
+      "browser agent",
+      "document parsing",
+      "document understanding",
+      "ocr",
+      "rag framework",
+      "retrieval augmented",
+      "retrieval-augmented",
+      "llm memory",
+      "long-term memory for llm",
+      "text-to-sql",
+      "code repair",
+      "code review",
+      "trading",
+      "financial"
+    ],
+    "domain_boost_keywords": [
+      "robot",
+      "manipulation",
+      "grasping",
+      "locomotion",
+      "navigation",
+      "planning",
+      "reinforcement learning",
+      "policy learning",
+      "visuomotor",
+      "action prediction"
+    ],
+    "topic_clusters": {
+      "A1_World_Model": {
+        "label": "World Model",
+        "keywords": [
+          "world model", "world modeling", "latent dynamics", "model-based rl",
+          "model-based reinforcement learning", "learned dynamics", "environment model",
+          "forward model", "predictive model", "world simulator", "video prediction",
+          "future prediction", "model predictive control", "mpc", "trajectory optimization",
+          "dreamer", "dreamerv3", "world transformer", "world simulation",
+          "game world model", "3d world generation", "scene generation",
+          "executable world model", "world generation", "state representation learning",
+          "planning in latent", "imaginary trajectory", "rollout"
+        ]
+      },
+      "A2_Robot_Manipulation": {
+        "label": "Robot Manipulation & Policy",
+        "keywords": [
+          "robot manipulation", "dexterous manipulation", "bimanual manipulation",
+          "imitation learning", "robot policy", "manipulation policy", "policy learning",
+          "visuomotor", "action prediction", "grasping", "robot hand", "dexterous hand",
+          "manipulation benchmark", "contact-rich", "in-hand manipulation",
+          "policy optimization", "behavioral cloning", "demonstration learning",
+          "skill learning", "task and motion planning", "pick and place", "assembly",
+          "learning from demonstration", "robot arm", "end-effector"
+        ]
+      },
+      "A3_Embodied_Navigation": {
+        "label": "Embodied Perception & Navigation",
+        "keywords": [
+          "embodied ai", "embodied agent", "embodied intelligence", "navigation",
+          "visual navigation", "semantic navigation", "object navigation", "exploration",
+          "slam", "visual slam", "mapping", "semantic mapping", "spatial reasoning",
+          "visual grounding", "scene understanding", "3d scene understanding",
+          "sim-to-real", "sim2real", "domain randomization", "robot simulation",
+          "mobile robot", "social navigation", "motion planning", "path planning",
+          "legged locomotion", "depth estimation", "point cloud",
+          "novel view synthesis"
+        ]
+      },
+      "B1_GPU_Training": {
+        "label": "GPU Training",
+        "keywords": [
+          "distributed training", "model parallelism", "data parallelism",
+          "pipeline parallelism", "tensor parallelism", "fsdp", "fully sharded",
+          "zero optimization", "mixed precision", "gradient checkpoint",
+          "activation checkpoint", "flash attention", "deepspeed", "megatron",
+          "large scale training", "training efficiency", "gpu memory", "scaling law",
+          "throughput optimization", "communication overlap", "cuda graph",
+          "torch.compile", "triton kernel", "gpu cluster", "training throughput",
+          "model flops utilization", "gradient accumulation", "ring attention"
+        ]
+      },
+      "B2_GPU_Inference": {
+        "label": "GPU Inference / Serving",
+        "keywords": [
+          "llm inference", "inference serving", "model serving", "vllm",
+          "kv cache", "speculative decoding", "model quantization", "pagedattention",
+          "continuous batching", "inference optimization", "inference acceleration",
+          "tensorrt-llm", "llama.cpp", "gguf", "awq", "gptq", "model compression",
+          "knowledge distillation", "pruning", "inference latency",
+          "time-to-first-token", "ttft", "tokens per second", "throughput",
+          "slo", "service level objective", "disaggregated inference",
+          "on-device inference", "edge inference"
+        ]
+      },
+      "C1_Diffusion_Gen": {
+        "label": "Diffusion & Generative Models",
+        "keywords": [
+          "diffusion model", "denoising diffusion", "score matching", "flow matching",
+          "consistency model", "probability flow", "ddpm", "ddim",
+          "diffusion transformer", "latent diffusion", "classifier-free guidance",
+          "sde", "ode", "image generation", "text-to-image", "text2image",
+          "video generation", "video diffusion", "text-to-video",
+          "3d generation", "image-to-3d", "text-to-3d",
+          "gaussian splatting", "3dgs", "neural rendering", "generative model",
+          "autoregressive generation", "masked generative", "discrete diffusion",
+          "vae", "variational autoencoder", "vqgan", "gan", "normalizing flow"
+        ]
+      },
+      "A4_Agentic_Design": {
+        "label": "Agent Architecture & Design",
+        "keywords": [
+          "agent architecture", "agent framework", "multi-agent",
+          "agentic", "language agent", "llm agent",
+          "tool use", "tool-use", "tool calling", "function calling",
+          "agent workflow", "agent orchestration",
+          "reasoning agent", "planning agent",
+          "agent memory", "agent state",
+          "react agent", "reflection agent",
+          "autonomous agent", "ai agent",
+          "agent training", "agent evaluation",
+          "tool learning", "tool-augmented",
+          "reAct", "chain-of-thought", "tree-of-thought",
+          "self-reflection", "self-improvement",
+          "agent benchmark", "agent simulation"
+        ]
+      }
+    },
+    "arxiv_categories": ["cs.RO", "cs.CV", "cs.AI", "cs.LG"],
+    "min_score": 2,
+    "top_n": 30,
+    "ensure_clusters": ["B2_GPU_Inference", "A4_Agentic_Design"]
+  },
+  "automation": {
+    "auto_refresh_indexes": true,
+    "git_commit": false,
+    "git_push": false
+  }
+}

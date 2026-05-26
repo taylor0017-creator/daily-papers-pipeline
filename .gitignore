@@ -1,0 +1,15 @@
+*
+!.gitignore
+
+# Our pipeline directories
+!_shared/
+!daily-papers/
+!daily-papers-fetch/
+!daily-papers-review/
+!daily-papers-notes/
+!generate-mocs/
+
+# Ignore cache/artifacts within tracked dirs
+.mypy_cache/
+__pycache__/
+*.pyc
