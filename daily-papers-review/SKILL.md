@@ -42,6 +42,7 @@ description: |
 1. 检查 `/tmp/daily_papers_enriched.json` 是否存在
 2. 如果不存在，告知用户需要先运行 `跑一下论文抓取`，然后停止
 3. **读取用户偏好文件** `../_shared/user-preferences.md`，按核心方向/兴趣方向/过滤规则筛选论文
+4. **检查重复推荐比例**：读取 `/tmp/daily_papers_fetch_stderr.log`，查找 `re-recommend:` 行。如果 re-recommend 占比超过 80%（如 `re-recommend: 18/20`），说明今天的大多数论文与之前重复。此时应告知用户"今天大部分论文已经推荐过，跳过点评"，不生成推荐文件，直接结束。如果占比在 50%-80% 之间，在开头锐评中说明情况。
 
 ## 工作流程
 
@@ -86,6 +87,8 @@ description: |
 - `hf-daily` → `📰 HF Daily，⬆️ {hf_upvotes}`
 - `hf-trending` → 🔥 HF Trending，⬆️ {hf_upvotes}`
 - `arxiv` → `📄 arXiv 关键词检索`（不显示 upvotes，因为没有）
+
+**注意**：`hf_upvotes` 字段仅 HF 来源的论文存在，OpenAlex/arxiv 来源的论文没有此字段，访问时请用 `p.get('hf_upvotes', '')` 避免 KeyError。
 
 #### 兜底过滤
 
@@ -257,7 +260,19 @@ cd {VAULT_PATH} && git add "{daily_papers_folder}/YYYY-MM-DD-论文推荐.md" "{
 
 对本次推荐的所有论文，写入轻笔记到 `{NOTES_PATH}/_轻笔记/`。每条轻笔记是 ~40-60 行的精简 markdown，**直接基于富化数据填充，不调用 LLM**。
 
-**使用方法名缩写作为文件名**：优先使用 `method_names[0]`（如果可用且不是一个通用词），否则从标题冒号前提取缩写。两个都不可用时用 arxiv ID 做文件名。
+**使用方法名缩写作为文件名**，按优先级逐级降级：
+
+1. **标题冒号前缩写**（如 "SCOPE: Simulating..." → `SCOPE`）。标题冒号前的词如果是一个有意义的大写缩写，优先使用
+2. **遍历 method_names 跳过通用词**：如果标题缩写不可用，遍历 `method_names` 列表，跳过以下通用词黑名单，取第一个非通用词：
+   - 单/双字母：`AI`, `LLM`, `VLM`, `RL`, `PPO`, `AA`, `KK`, `OO`, `NN`, `MM`, `FF`, `II`, `GG`, `NOT`, `ONLY`, `RE`, `FE`, `GT` 等
+   - 公司/平台名：`GitHub`, `OpenAI`, `NVIDIA`, `DeepSeek`, `Google`, `Meta`, `Microsoft`
+   - 会议名：`CVF`, `CVPR`, `ICCV`, `ECCV`, `NeurIPS`, `ICML`, `ICLR`, `AAAI`, `ICRA`, `IROS`, `CoRL`
+   - 通用技术缩写：`API`, `URL`, `HTML`, `PDF`, `JSON`, `XML`, `SOTA`, `FPS`, `FID`, `PSNR`, `SSIM`
+   - LaTeX 符号：`TeX`, `LaTeX`, `BibTeX`, `CSS`
+   - 标注类：`TABLE`, `FIGURE`, `INTRODUCTION`, `CONCLUSION`, `ABSTRACT`
+3. **arXiv ID 兜底**：前两者都不可用时用 arxiv ID（无小数点版本，如 `260523771`）做文件名
+
+**注意**：无论使用哪种策略，文件名应尽量短（不超过 30 字符），不包含空格或特殊字符。
 
 轻笔记模板：
 

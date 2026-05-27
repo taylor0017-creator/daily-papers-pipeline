@@ -557,7 +557,8 @@ def merge_and_dedup(
 
     top = candidates[:top_n]
     top = _enforce_cluster_quotas(top, candidates, ENSURE_CLUSTERS)
-    print(f"  Final: {len(top)} papers", file=sys.stderr)
+    re_rec = sum(1 for p in top if p.get("is_re_recommend"))
+    print(f"  Final: {len(top)} papers (re-recommend: {re_rec}/{len(top)})", file=sys.stderr)
     return top
 
 

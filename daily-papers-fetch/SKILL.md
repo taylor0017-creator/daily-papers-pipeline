@@ -59,11 +59,11 @@ description: |
 用 `fetch_and_score.py` 一步完成 HF + arXiv 抓取、打分、合并去重、历史去重、选 Top 30。**零 token 消耗。**
 
 ```bash
-# 默认：当天
-python3 ../daily-papers/fetch_and_score.py > /tmp/daily_papers_top30.json
+# 默认：当天（stderr → 日志文件，stdout → JSON）
+python3 ../daily-papers/fetch_and_score.py 1>/tmp/daily_papers_top30.json 2>/tmp/daily_papers_fetch_stderr.log
 
 # 多天模式（将 N 替换为解析出的天数）
-python3 ../daily-papers/fetch_and_score.py --days N > /tmp/daily_papers_top30.json
+python3 ../daily-papers/fetch_and_score.py --days N 1>/tmp/daily_papers_top30.json 2>/tmp/daily_papers_fetch_stderr.log
 ```
 
 根据前面解析的 `DAYS_ARG`，如果用户指定了天数就加 `--days N`，否则不加。
@@ -78,7 +78,7 @@ python3 ../daily-papers/fetch_and_score.py --days N > /tmp/daily_papers_top30.js
 
 进度日志输出到 stderr，JSON 结果输出到 stdout。
 
-**检查输出**：确认 `/tmp/daily_papers_top30.json` 存在且包含有效 JSON 数组。如果为空数组或文件不存在，检查 stderr 诊断问题。
+**检查输出**：确认 `/tmp/daily_papers_top30.json` 存在且包含有效 JSON 数组。如果为空数组或文件不存在，检查 `/tmp/daily_papers_fetch_stderr.log` 诊断问题。
 
 ### Phase 3: 批量富化（enrich_papers.py 脚本）
 

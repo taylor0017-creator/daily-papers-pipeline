@@ -35,7 +35,7 @@ if str(_SHARED_DIR) not in sys.path:
 from user_config import temp_file_path
 
 SEMAPHORE_LIMIT = 10
-CURL_TIMEOUT = 30
+CURL_TIMEOUT = 45
 
 # ── Stop words for method_names extraction ──────────────────────────────────
 METHOD_STOP = {
@@ -55,6 +55,43 @@ METHOD_STOP = {
     "FPS", "IoU", "MAP", "FID", "PSNR", "SSIM", "LPIPS", "MSE", "MAE",
     "BCE", "CE", "KL", "GNN", "VAE", "ELBO", "EM",
     "SoTA", "SOTA", "TODO", "NOTE", "TBD",
+    # Generic model/tech abbreviations (too generic for method names)
+    "AI", "LLM", "VLM", "VLN", "MLLM",
+    "RL", "MARL", "DRL", "IL", "BC", "IRL",
+    "ML", "DL", "NLP", "CV", "IR", "KG",
+    "CLIP", "DINO", "BERT", "GPT", "GPT-3", "GPT-4", "GPT-5",
+    "T5", "LLaMA", "LLaVA", "ViT", "ResNet", "UNet", "Transformer",
+    # Platform / company / publication
+    "GitHub", "arXiv", "OpenAI", "NVIDIA", "DeepSeek", "Google",
+    "Meta", "Microsoft", "Apple", "Amazon", "Anthropic",
+    "ISSN", "ISBN", "DOI", "CC", "BY", "NC", "ND", "SA",
+    # Generic 2-3 letter noise
+    "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ",
+    "BB", "CC", "CD", "DD", "EE", "FF", "GG", "HH", "II", "JJ",
+    "KK", "LL", "MM", "NN", "OO", "PP", "QQ", "RR", "SS", "TT",
+    "UU", "VV", "WW", "XX", "YY", "ZZ",
+    "BA", "CA", "DA", "EA", "FA", "GA", "HA", "IA", "JA", "KA",
+    "LA", "MA", "NA", "PA", "QA", "RA", "SA", "TA", "UA", "VA",
+    "WA", "XA", "YA", "ZA",
+    "AB", "BC", "CD", "DE", "EF", "FG", "GH", "HI", "IJ", "JK",
+    "KL", "LM", "MN", "NO", "OP", "PQ", "QR", "RS", "ST", "TU",
+    "UV", "VW", "WX", "XY", "YZ",
+    "NOT", "ONLY", "ALL", "ANY", "NEW", "OLD", "BIG", "USE", "SET",
+    "MUST", "CAN", "WILL", "MAY", "RE", "FE", "FI", "FO", "GT",
+    "ID", "MS", "MT", "OS", "RS", "SG", "SM", "SP", "SQ", "SR",
+    "ST", "SV", "SW", "SX", "SY", "SZ",
+    "TRC", "VP", "VF", "PBO", "MF", "BO", "CT", "OFT", "HH", "GS",
+    # Common publication / section artifacts
+    "TABLE", "TAB", "FIG", "FIGURE", "ALG", "ALGO", "ALGORITHM",
+    "PROOF", "DEF", "DEFINITION", "LEMMA", "THEOREM", "COROLLARY",
+    "NOTE", "TIP", "WARN", "WARNING", "INFO", "HINT",
+    "ACK", "ACKNOWLEDGMENT", "ACKNOWLEDGEMENT",
+    "SUPP", "SUPPLEMENTARY", "APP", "APPENDIX",
+    # Prefix noise
+    "PRE", "POST", "PRO", "CON", "COM", "DIS", "NON", "SUB",
+    # HTML/CSS artifacts
+    "DIV", "SPAN", "CLASS", "STYLE", "FONT", "IMG", "HREF", "SRC",
+    "LTX", "LTXPERSONNAME", "L TX", "MATH", "TEX", "LATEX", "BIBTEX",
     # Generic terms
     "Table", "Figure", "Section", "Eq", "Equation", "Algorithm",
     "Step", "Phase", "Stage", "Layer", "Block", "Module", "Head",
@@ -266,30 +303,47 @@ def extract_method_names(html: str, paper_title: str) -> list[str]:
 
 def extract_method_summary(html: str) -> str:
     """Extract method description from Method/Approach sections (300-500 chars)."""
-    # Strategy: find h2/h3 headers containing Method/Approach/Framework/Proposed,
-    # then extract text until the next h2/h3.
-    # Note: headers may contain inner tags like <span>, so we use .*? not [^<]*
     section_text = ""
 
-    # Primary: find content after Method/Approach header until next header
-    m = re.search(
-        r"<h[23][^>]*>.*?(?:Method|Approach|Framework|Proposed).*?</h[23]>(.*?)(?:<h[23]|$)",
-        html, re.DOTALL | re.IGNORECASE
-    )
-    if m:
-        section_text = strip_tags(m.group(1))
-
-    if not section_text:
-        # Last resort: try Introduction's last paragraphs
+    # Strategy 1: Primary - find content after Method/Approach/Architecture header
+    # Support h1-h3 headers with flexible keyword matching
+    for tag in ["h1", "h2", "h3"]:
+        if section_text:
+            break
         m = re.search(
-            r"<h[23][^>]*>.*?Introduction.*?</h[23]>(.*?)(?:<h[23]|$)",
+            rf"<{tag}[^>]*>.*?(?:Method|Approach|Framework|Proposed|Architecture|System Design|Algorithm|Our Method|Our Approach|Model Architecture|Training).*?</{tag}>(.*?)(?:<h[123]|$)",
             html, re.DOTALL | re.IGNORECASE
         )
         if m:
-            intro_text = strip_tags(m.group(1))
-            paragraphs = [p.strip() for p in intro_text.split("\n\n") if p.strip()]
-            # Take last 2 paragraphs (usually contain method overview)
-            section_text = "\n".join(paragraphs[-2:]) if paragraphs else ""
+            section_text = strip_tags(m.group(1))
+            if len(section_text) < 50:
+                section_text = ""
+
+    if not section_text:
+        # Strategy 2: Introduction's last paragraphs (method often previewed there)
+        for tag in ["h1", "h2", "h3"]:
+            m = re.search(
+                rf"<{tag}[^>]*>.*?Introduction.*?</{tag}>(.*?)(?:<h[123]|$)",
+                html, re.DOTALL | re.IGNORECASE
+            )
+            if m:
+                intro_text = strip_tags(m.group(1))
+                paragraphs = [p.strip() for p in intro_text.split("\n\n") if p.strip()]
+                section_text = "\n".join(paragraphs[-2:]) if paragraphs else ""
+                if section_text:
+                    break
+
+    if not section_text:
+        # Strategy 3: First substantial paragraph after abstract (arXiv HTML pattern)
+        m = re.search(
+            r"abstract.*?</div>(.*?)(?:<h[123]|$)",
+            html, re.DOTALL | re.IGNORECASE
+        )
+        if m:
+            post_abstract = strip_tags(m.group(1))
+            paragraphs = [p.strip() for p in post_abstract.split("\n\n") if p.strip() and len(p.strip()) > 40]
+            if paragraphs:
+                section_text = paragraphs[0]
 
     if not section_text:
         return ""
