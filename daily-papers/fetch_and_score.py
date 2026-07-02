@@ -12,6 +12,8 @@ Usage:
 Stderr: progress logs.  Stdout: JSON array of top papers (30 * days).
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import re

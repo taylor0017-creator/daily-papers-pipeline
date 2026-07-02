@@ -13,14 +13,11 @@ Usage:
 
 Input:  JSON array via stdin or auto-detected file
 Output: JSON array via stdout or file with enriched fields added
-
-Architecture:
-    - asyncio + subprocess curl for concurrent HTTP requests
-    - Semaphore(10) to avoid hammering arXiv
-    - Pure regex HTML parsing (no WebFetch / no external deps)
-    - Per-request timeout via curl --max-time (no Python-level per-paper timeout)
 """
 
+from __future__ import annotations
+
+import argparse
 import asyncio
 import json
 import re
